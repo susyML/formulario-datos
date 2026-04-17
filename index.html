@@ -76,7 +76,204 @@ let mapa, marcador;
 
 // AQUÍ PEGA TU ARRAY CONFIG_FORMULARIO EXACTAMENTE COMO LO TIENES
 const CONFIG_FORMULARIO = [
-    // ... TODAS TUS PREGUNTAS (9 SECCIONES) VAN AQUÍ ...
+{
+    titulo: "1. Información Personal",
+    preguntas: [
+      { id: "nombre_completo", label: "Nombre completo", tipo: "text", requerido: true },
+      { id: "num_empleado", label: "Número de empleado (Peoplesoft/Colaborador)", tipo: "text", requerido: true },
+      { id: "tipo_doc", label: "Tipo de documento de identidad", tipo: "select", opciones: ["DUI", "Cédula", "Pasaporte", "Otro"], requerido: true },
+      { id: "num_doc", label: "Número de documento de identidad", tipo: "text", requerido: true },
+      { id: "Fecha_nacimiento", label: "Fecha de nacimiento", tipo: "date", requerido: true },
+      { id: "lugar_nacimiento", label: "Lugar de nacimiento", tipo:"text", requerido: true },
+      { id: "genero", label: "Género", tipo: "radio", opciones: ["Femenino", "Masculino"], requerido: true },
+      { id: "estado_civil", label: "Estado civil actual", tipo: "select", opciones: ["Soltero(a)", "Casado(a)", "Acompañado(a)", "Viudo(a)", "Divorciado(a)) "], requerido: true },
+      { id: "profesion", label: "Profesión u oficio", tipo: "text", requerido: true },
+      { id: "puesto", label: "Puesto que desempeña actualmente", tipo: "text", requerido: true },
+      { id: "dep", label: "Departamento al que pertenece", tipo: "text", requerido: true },
+      { id: "Modalidad_trabajo", label: "Modalidad actual de trabajo", tipo: "select", opciones: ["Presencial", "Híbrido", "Remoto"], requerido: true },
+      { id: "tel_celular", label: "Teléfono Celular", tipo: "text", requerido: true },
+      { id: "tel_corporativo", label: "Teléfono Corporativo", tipo: "text" },
+      { id: "departamento", label: "Departamento/Provincia de domicilio", tipo: "text", requerido: true },
+      { id: "direccion_text", label: "Dirección de domicilio", tipo: "textarea", requerido: true },
+      { id: "gps", label: "Coordenadas GPS", tipo: "mapa" } // TIPO ESPECIAL MAPA
+    ]
+  },
+  {
+    titulo: "2. Salud y Contactos de Emergencia",
+    preguntas: [
+      { id: "tipo_sangre", label: "Tipo de sangre", tipo: "text" },
+      { id: "donante", label: "¿Es donante de sangre?", tipo: "radio", opciones: ["Si", "No"] },
+      { id: "discapacidad", label: "¿Posee alguna discapacidad temporal o permanente?", tipo: "radio", opciones: ["Si", "No"]},
+      { id: "discapacidad_diag", label: "Diagnostico de discapacidad", tipo: "text", dependeDe: "discapacidad", valorPadre: "Si" },
+      { id: "enfermedad_cronica", label: "¿Tiene alguna enfermedad o condición crónica?", tipo: "radio", opciones: ["Si", "No"]},
+      { id: "diag_enfermedad_cronica", label: "Diagnostico de la condición crónica", tipo: "text",dependeDe: "enfermedad_cronica", valorPadre: "Si" },
+      { id: "atencion_especial", label: "¿Padece de alguna enfermedad que requiera atención especial en caso de emergencia?", tipo: "radio", opciones: ["Si", "No"] },
+      { id: "nom_padecimiento", label: "Nombre de la enfermedad o padecimiento para atención en emergencia", tipo: "text", dependeDe: "atencion_especial", valorPadre: "Si" },
+      { id: "medicamento", label: "¿Toma algún medicamento de forma permanente?", tipo: "radio", opciones: ["Si", "No"] },
+      { id: "nom_medi", label: "Nombre del medicamento que toma permanentemente", tipo: "text", dependeDe: "medicamento", valorPadre: "Si" },
+      { id: "alergias", label: "¿Es alérgico/a a algún producto o medicamento?", tipo: "radio", opciones: ["Si", "No"] },
+      { id: "nom_alergias", label: "Nombre de los productos o medicamentos a los que es alérgico/a", tipo: "text", dependeDe: "alergias", valorPadre: "Si" },
+      { id: "lentes", label: "¿Utiliza lentes por recomendación de un oftalmólogo?", tipo: "radio", opciones: ["Si", "No"] },
+      { id: "nombre_contacto1", label: "Nombre completo de contacto de emergencia 1", tipo: "text" },
+      { id: "parentesco_contacto1", label: "Parentesco del contacto de emergencia 1", tipo: "select", opciones: ["Madre", "Padre", "Hermano(a)", "Tío(a)", "Abuelo(a)", "Otro"] },
+      { id: "tipo_parentesco1", label: "¿Que tipo de parentesco es?", tipo: "text", dependeDe: "parentesco_contacto1", valorPadre: "Otro" },
+      { id: "tel_contacto1", label: "Teléfono del contacto de emergencia 1", tipo: "text" },
+      { id: "direccion_contacto1", label: "Dirección de residencia del contacto de emergencia 1", tipo: "text" },
+      { id: "nombre_contacto2", label: "Nombre completo de contacto de emergencia 2", tipo: "text" },
+      { id: "parentesco_contacto2", label: "Parentesco del contacto de emergencia 2", tipo: "select", opciones: ["Madre", "Padre", "Hermano(a)", "Tío(a)", "Abuelo(a)", "Otro"] },
+      { id: "tipo_parentesco2", label: "¿Que tipo de parentesco es?", tipo: "text", dependeDe: "parentesco_contacto2", valorPadre: "Otro" },
+      { id: "tel_contacto2", label: "Teléfono del contacto de emergencia 2", tipo: "text" },
+      { id: "direccion_contacto2", label: "Dirección de residencia del contacto de emergencia 2", tipo: "text" }
+    ]
+  },
+  {
+    titulo: "3. Grupo Familiar",
+    preguntas: [
+      { id: "Nombre_conyuge", label: "Nombre completo del cónyuge o compañero (a)", tipo: "text", dependeDe: "estado_civil", valorPadre: ["Casado(a)", "Acompañado(a)"] },
+      { id: "identificacion_conyuge", label: "Número de identificación del cónyuge", tipo: "text", dependeDe: "estado_civil", valorPadre: ["Casado(a)", "Acompañado(a)"] },
+      { id: "nacimiento_conyuge", label: "Fecha de nacimiento del cónyuge", tipo: "date", dependeDe: "estado_civil", valorPadre: ["Casado(a)", "Acompañado(a)"] },
+      { id: "trabajo_conyuge", label: "¿Trabaja actualmente su cónyuge?", tipo: "radio", opciones: ["Si", "No"], dependeDe: "estado_civil", valorPadre: ["Casado(a)", "Acompañado(a)"] },
+      { id: "lugar_trabajo_conyuge", label: "Lugar de trabajo del cónyuge", tipo: "text", dependeDe: "trabajo_conyuge", valorPadre: "Si" },
+      { id: "cargo_conyuge", label: "Cargo o posición del cónyuge", tipo: "text", dependeDe: "trabajo_conyuge", valorPadre: "Si" },
+      { id: "tel_conyuge", label: "Teléfono del cónyuge", tipo: "text", dependeDe: "estado_civil", valorPadre: ["Casado(a)", "Acompañado(a)"] },
+      { id: "hijos", label: "¿Tienes hijos?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_hijo", label: "Nombre completo del hijo(a)", tipo: "text", dependeDe: "hijos", valorPadre: "Si" },
+      { id: "fecha_hijo", label: "Fecha de nacimiento del hijo(a)", tipo: "date", dependeDe: "hijos", valorPadre: "Si" },
+      { id: "dependientes", label: "¿Tienes otros dependientes que habiten en su hogar?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_dependiente", label: "Nombre completo del dependiente", tipo: "text", dependeDe: "dependientes", valorPadre: "Si" },
+      { id: "tipo_dependencia", label: "Tipo de dependencia", tipo: "radio", opciones: ["Parcial", "Completa"], dependeDe: "dependientes", valorPadre: "Si" },
+      { id: "familiar_discapacidad", label: "¿Tiene algún familiar con discapacidad que dependa de usted directamente?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "parentesco", label: "Parentesco del familiar con discapacidad", tipo: "select", opciones: ["Madre", "Padre", "Hermano(a)", "Tío(a)", "Abuelo(a)"], dependeDe: "familiar_discapacidad", valorPadre: "Si" },
+      { id: "diag_familiar", label: "Diagnostico de discapacidad del familiar", tipo: "text", dependeDe: "familiar_discapacidad", valorPadre: "Si" }
+    ]
+  },
+  {
+    titulo: "4. Información educativa",
+    preguntas: [
+      { id: "nivel_academico", label: "Nivel académico alcanzado", tipo: "select", opciones: ["Bachillerato", "Técnico", "Universidad", "Maestría", "Posgrado", "Doctorado"], requerido: true },
+      { id: "titulo", label: "Título odtenido", tipo: "text", requerido: true },
+      { id: "institucion", label: "Institución educativa o centro de estudio", tipo: "text", requerido: true },
+      { id: "pais", label: "País donde obtuvo el título", tipo: "text", requerido: true },
+      { id: "año", label: "Año de graduación", tipo: "text", requerido: true },
+      { id: "universidad", label: "¿Está inscrito en la universidad actualmente?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_uni", label: "Nombre de la Universidad", tipo: "text", dependeDe: "universidad", valorPadre: "Si" },
+      { id: "carrera", label: "Carrera en curso", tipo: "text", dependeDe: "universidad", valorPadre: "Si" },
+      { id: "año_uni", label: "Año de estudio que cursa actualmente", tipo: "text", dependeDe: "universidad", valorPadre: "Si" },
+      { id: "titulos", label: "Títulos Universitarios que posee", tipo: "text", requerido: true },
+      { id: "certificaciones", label: "Certificaciones locales o internacionales", tipo: "text", requerido: true },
+      { id: "idiomas", label: "Idiomas que maneja", tipo: "select", opciones: ["Inglés", "Francés", "Portugués", "Español", "Otro"], requerido: true },
+      { id: "otro_idioma", label: "¿Qué otro idioma conoces?", tipo: "text", dependeDe: "idiomas", valorPadre: "Otro" },
+      { id: "oral", label: "Nivel de dominio oral", tipo: "radio", opciones: ["Básico", "Intermedio", "Avanzado", "Nativo"], requerido: true },
+      { id: "escrito", label: "Nivel de dominio de escritura", tipo: "radio", opciones: ["Básico", "Intermedio", "Avanzado", "Nativo"], requerido: true },
+      { id: "lectura", label: "Nivel de dominio de lectura", tipo: "radio", opciones: ["Básico", "Intermedio", "Avanzado", "Nativo"], requerido: true }
+    ]
+  },
+  {
+    titulo: "5. Experiencia Laboral",
+    preguntas: [
+      { id: "antes", label: "¿Ha tenido otro empleo antes de entrar a Banco Davivienda?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "cantidad_empleos", label: "¿Cuantos empleos ha tenido antes de entrar a Banco Davivienda?", tipo: "select", opciones: ["1", "2", "3", "Más de 3"], dependeDe: "antes", valorPadre: "Si" },
+      { id: "nombre_fuera1", label: "Nombre de la empresa 1 donde laboró antes de entrar a Banco Davivienda", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["1", "2", "3", "Más de 3"] },
+      { id: "cargo_fuera1", label: "Cargo desempeñado en la empresa 1", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["1", "2", "3", "Más de 3"] },
+      { id: "funciones_fuera1", label: "Principales funciones realizadas en la empresa 1", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["1", "2", "3", "Más de 3"] },
+      { id: "fecha_ingreso1", label: "Fecha de ingreso a la empresa 1", tipo: "date", dependeDe: "cantidad_empleos", valorPadre: ["1", "2", "3", "Más de 3"] },
+      { id: "fecha_retiro1", label: "Fecha de retiro de la empresa 1", tipo: "date", dependeDe: "cantidad_empleos", valorPadre: ["1", "2", "3", "Más de 3"] },
+      { id: "motivo1", label: "Motivo del retiro de la empresa 1", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["1", "2", "3", "Más de 3"]},
+      { id: "nombre_fuera2", label: "Nombre de la empresa 2 donde laboró anteriormente", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["2", "3", "Más de 3"] },
+      { id: "cargo_fuera2", label: "Cargo desempeñado en la empresa 2", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["2", "3", "Más de 3"] },
+      { id: "funciones_fuera2", label: "Principales funciones realizadas en la empresa 2", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["2", "3", "Más de 3"] },
+      { id: "fecha_ingreso2", label: "Fecha de ingreso a la empresa 2", tipo: "date", dependeDe: "cantidad_empleos", valorPadre: ["2", "3", "Más de 3"] },
+      { id: "fecha_retiro2", label: "Fecha de retiro de la empresa 2", tipo: "date", dependeDe: "cantidad_empleos", valorPadre: ["2", "3", "Más de 3"] },
+      { id: "motivo2", label: "Motivo del retiro de la empresa 2", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["2", "3", "Más de 3"]},
+      { id: "nombre_fuera3", label: "Nombre de la empresa 3 donde laboró anteriormente", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["3","Más de 3"] },
+      { id: "cargo_fuera3", label: "Cargo desempeñado en la empresa 3", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["3","Más de 3"] },
+      { id: "funciones_fuera3", label: "Principales funciones realizadas en la empresa 3", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["3","Más de 3"] },
+      { id: "fecha_ingreso3", label: "Fecha de ingreso a la empresa 3", tipo: "date", dependeDe: "cantidad_empleos", valorPadre: ["3","Más de 3"] },
+      { id: "fecha_retiro3", label: "Fecha de retiro de la empresa 3", tipo: "date", dependeDe: "cantidad_empleos", valorPadre: ["3","Más de 3"] },
+      { id: "motivo3", label: "Motivo del retiro de la empresa 3", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["3","Más de 3"] }
+    ]
+  },
+  {
+    titulo: "6. Información sobre vivienda y  vehículos",
+    preguntas: [
+      { id: "tipo_vivienda", label: "Tipo de vivienda que habita", tipo: "radio", opciones: ["Propia", "Alquilada", "Hipotecada", "Familiar"], requerido: true },
+      { id: "inmoviliario", label: "¿Posee activos inmobiliarios propios o mancomunados?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "tipo_inmoviliario", label: "Tipo de activo inmobiliario", tipo: "radio", opciones: ["Casas", "Terrenos", "Otro"], dependeDe: "inmoviliario", valorPadre: "Si" },
+      { id: "otro_tipo", label: "¿Qué tipo de inmobiliario posee?", tipo: "text", dependeDe: "tipo_inmoviliario", valorPadre: "Otro" },
+      { id: "Valor", label: "Valor estimdo del activo inmobiliario", tipo: "text", dependeDe: "inmoviliario", valorPadre: "Si", dependeDe: "tipo_inmoviliario", ValorPare: "Otro" },
+      { id: "mancomunado", label: "¿Es el activo mancomunado?", tipo: "radio", opciones: ["Si", "No"], dependeDe: "inmoviliario", vaorPadre: "Si", dependeDe: "tipo_inmoviliario", valorPadre: "Otro" },
+      { id: "propietario", label: "Nombre del propietario", tipo: "text", dependeDe: "mancomunado", valorPadre: "Si" },
+      { id: "vehiculos", label: "¿Posee automovil o motocicleta?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "tipo_vehiculo", label: "Tipo de vehículo", tipo: "radio", opciones: ["automovil", "Motocicleta", "Otro"], dependeDe: "vehiculos", valorPadre: "Si", requerido: true },
+      { id: "otro_tipo1", label: "¿Que tipo de vehículo posee?", tipo: "text", dependeDe: "tipo_vehiculo", valorPadre: "Otro" },
+      { id: "marca", label: "Marca del vehículo", tipo: "text", dependeDe: "vehiculos", valorPadre: "Si" },
+      { id: "modelo_vehiculos", label: "Modelo del vehículo", tipo: "text", dependeDe: "vehiculos", valorPadre: "Si" },
+      { id: "año_vehiculo", label: "Año del vehículo", tipo: "text", dependeDe: "vehiculos", valorPadre: "Si" },
+      { id: "color", label: "Color del vehículo", tipo: "text", dependeDe: "vehiculos", valorPadre: "Si" },
+      { id: "numero_placa", label: "Número de placa del vehículo", tipo: "text", dependeDe: "vehiculos", valorPadre: "Si" },
+      { id: "mas_vehiculos", label: "¿Posee más vehículos?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "tipo_vehiculo2", label: "Tipo de vehículo", tipo: "radio", opciones: ["automovil", "Motocicleta", "Otro"], dependeDe: "mas_vehiculos", valorPadre: "Si", requerido: true },
+      { id: "otro_tipo2", label: "¿Que tipo de vehículo posee?", tipo: "text", dependeDe: "tipo_vehiculo2", valorPadre: "Otro" },
+      { id: "marca2", label: "Marca del vehículo", tipo: "text", dependeDe: "mas_vehiculos", valorPadre: "Si" },
+      { id: "modelo_vehiculos2", label: "Modelo del vehículo", tipo: "text", dependeDe: "mas_vehiculos", valorPadre: "Si" },
+      { id: "año_vehiculo2", label: "Año del vehículo", tipo: "text", dependeDe: "mas_vehiculos", valorPadre: "Si" },
+      { id: "color2", label: "Color del vehículo", tipo: "text", dependeDe: "mas_vehiculos", valorPadre: "Si" },
+      { id: "numero_placa2", label: "Número de placa del vehículo", tipo: "text", dependeDe: "mas_vehiculos", valorPadre: "Si" }
+    ]
+  },
+  {
+    titulo: "7. Ingresos extra y otros datos financieros",
+    preguntas: [
+      { id: "ingresos_adicionales", label: "¿Cuenta con ingresos adicionales fuera de su trabajo actual?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "concepto_ingresos", label: "Concepto o motivo de los ingresos adicionales", tipo: "radio", opciones: ["Alquileres", "asesorías", "Otro"], dependeDe: "ingresos_adicionales", valorPadre: "Si", requerido: true },
+      { id: "otro_concepto", label: "¿A qué tipo de concepto pertenece tus ingresos adicionales?", tipo: "text", dependeDe: "concepto_ingresos", valorPadre: "Otro", requerido: true },
+      { id: "monto_mensual", label: "Monto mensual estimado de ingresos adicionales", tipo: "text", dependeDe: "ingresos_adicionales", valorPadre: "Si" },
+      { id: "recurrencia", label: "Recurrencia de los ingresos extra", tipo: "radio", opciones: ["Semanal", "Mensual", "Semestral", "Anual"], dependeDe: "ingresos_adicionales", valorPadre: "Si", requerido: true },
+      { id: "fuera_banco", label: "¿Está empleado fuera del banco actualmente?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_empresa_afuera", label: "Nombre de la empresa externa", tipo: "text", dependeDe: "fuera_banco", valorPAdre: "Si" },
+      { id: "salario_empresa_afuera", label: "Salario percibido", tipo: "text", dependeDe: "fuera_banco", valorPadre: "Si" },
+      { id: "productos_activos", label: "¿Tiene productos activos con el Banco Davivienda?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "seleccion_productos", label: "Selecciona los productos activos que posee", tipo: "radio", opciones: ["Seguros", "Prestamos", "Hipotecas"], dependeDe: "productos_activos", valorPadre: "Si" },
+      { id: "obligaciones", label: "¿Cuenta con obligaciones financieras en otras instituciones?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "procesos", label: "¿Posee embargos, pensión alimenticia o juicios en proceso?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "detalle_proceso", label: "Detalle del proceso legal y monto", tipo: "text", dependeDe: "procesos", valorPadre: "Si" }
+    ]
+  },
+  {
+    titulo: "8. Conflictos de Interes",
+    preguntas: [
+       { id: "familiares_laborando", label: "¿Tiene familiares que laboren en alguna empresa del Grupo Bolívar/Davivienda?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_familiar_empresa", label: "Nombre del familiar en la empresa", tipo: "text", dependeDe: "familiares_laborando", valorPadre: "Si" },
+      { id: "parentesco_familiar_laborando", label: "Parentesco que ocupa el familiar", tipo: "text", dependeDe: "familiares_laborando", valorPadre: "Si" },
+      { id: "Cargo_familiar_laborando", label: "Cargo que ocupa el familiar", tipo: "text", dependeDe: "familiares_laborando", valorPadre: "Si" },
+      { id: "familiares_proveedores", label: "¿Tiene familiares que sean proveedores o competencia directa del Grupo?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_familiar_proveedor", label: "Nombre del familiar relacionado con proveedores/competencia", tipo: "text", dependeDe: "familiares_proveedores", valorPadre: "Si" },
+      { id: "empresa_familiar_proveedor", label: "Empresa donde labora dicho familiar", tipo: "text", dependeDe: "familiares_proveedores", valorPadre: "Si" },
+      { id: "accionario", label: "% accionario si lo posee", tipo: "text", dependeDe: "familiares_proveedores", valorPadre: "Si" },
+      { id: "socio_legal", label: "¿Es usted socio, directivo o representante legal de alguna sociedad?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_sociedad", label: "Nombre de la sociedad y actividad económica", tipo: "text", dependeDe: "socio_legal", valorPadre: "Si" },
+      { id: "condicion_sociedad", label: "Condición en la sociedad (Socio, Representante, accionista%)", tipo: "text", dependeDe: "socio_legal", valorPadre: "Si" },
+      { id: "organizacion", label: "¿Es integrante de alguna organización sin fines de lucro o fundación?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "persona_expuesta", label: "¿Es usted o algún familiar una persona Expuesta Políticamente (PEP)?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_persona_externa", label: "Nombre del PEP", tipo: "text", dependeDe: "persona_expuesta", valorPadre: "Si" },
+      { id: "cargo_persona_externa", label: "Cargo del PEP", tipo: "text", dependeDe: "persona_expuesta", valorPadre: "Si" },
+      { id: "pais_persona_externa", label: "País del PEP", tipo: "text", dependeDe: "persona_expuesta", valorPadre: "Si" },
+      { id: "creditos_familia", label: "¿Ha participado en la aprobación de créditos para familiares o empresas relacionadas?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "proveedores_banco", label: "¿Existen proveedores del banco con los que usted tenga una relación personal o comercial?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "obsequios", label: "¿Ha recibido obsequios o invitaciones mayores a $100 de proveedores en los últimos 12 meses?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "desc_obsequios", label: "Escriba una breve descripción del obsequio que recibió", tipo: "text", dependeDe: "obsequios", valorPadre: "Si" },
+      { id: "aviso_jefe", label: "¿dio aviso a su jefe inmediato o a cumplimiento?", tipo: "radio", opciones: ["Si", "No"], dependeDe: "obsequios", valorPadre: "Si" },
+      { id: "venta_activos", label: "¿Ha estado involucrado en la venta de activos del banco donde exista un posible conflicto de interés?", tipo: "radio", opciones: ["Si", "No"], requerido: true }
+    ]
+  },
+  {
+    titulo: "9. Declaraciones Finales",
+    preguntas: [
+      { id: "infrmacion_etica", label: "¿Declara que ha sido informado sobre el Código de Ética y Políticas de Prevención de Corrupción?", tipo: "radio", opciones: ["Acepto"], requerido: true },
+      { id: "info_proporcionada", label: "¿Declara que toda la información aquí proporcionada es verídica y completa?", tipo: "radio", opciones: ["Acepto"], requerido: true },
+      { id: "recomendaciones", label: "Recomendaciones, sugerencias, o explicaciones adicionales que desee aportar", tipo: "text" }
+    ]
+  }
 ];
 
 function fijarPais() {
