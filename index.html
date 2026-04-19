@@ -439,3 +439,607 @@ function finalizar() {
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+function doPost(e) {
+  try {
+    const datos = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let hoja = ss.getSheetByName('Respuestas') || ss.insertSheet('Respuestas');
+    
+    // El orden lógico que ya definiste en tu código anterior
+    const ORDEN_LOGICO = [
+      "País", "Fecha de Registro", "Aceptó Ley 81", "Email de Usuario", "Nombre completo", 
+      "Número de empleado (Peoplesoft/Colaborador)", "Tipo de documento de identidad", 
+      "Número de documento de identidad", "Fecha de nacimiento", "Lugar de nacimiento", 
+      "Género", "Estado civil actual", "Profesión u oficio", "Puesto que desempeña actualmente", 
+      "Departamento al que pertenece", "Modalidad actual de trabajo", "Teléfono Celular", 
+      "Teléfono Corporativo", "Departamento/Provincia de domicilio", "Dirección de domicilio", 
+      "Coordenadas GPS", "Tipo de sangre", "¿Es donante de sangre?", 
+      "¿Posee alguna discapacidad temporal o permanente?", "Diagnostico de discapacidad", 
+      "¿Tiene alguna enfermedad o condición crónica?", "Diagnostico de la condición crónica", 
+      "¿Padece de alguna enfermedad que requiera atención especial en caso de emergencia?", 
+      "Nombre de la enfermedad o padecimiento para atención en emergencia", 
+      "¿Toma algún medicamento de forma permanente?", "Nombre del medicamento que toma permanentemente", 
+      "¿Es alérgico/a a algún producto o medicamento?", "Nombre de los productos o medicamentos a los que es alérgico/a", 
+      "¿Utiliza lentes por recomendación de un oftalmólogo?", "Nombre completo de contacto de emergencia 1", 
+      "Parentesco del contacto de emergencia 1", "¿Que tipo de parentesco es?", "Teléfono del contacto de emergencia 1", 
+      "Dirección de residencia del contacto de emergencia 1", "Nombre completo de contacto de emergencia 2", 
+      "Parentesco del contacto de emergencia 2", "¿Que tipo de parentesco es?", "Teléfono del contacto de emergencia 2", 
+      "Dirección de residencia del contacto de emergencia 2", "Nombre completo del cónyuge o compañero (a)", 
+      "Número de identificación del cónyuge", "Fecha de nacimiento del cónyuge", "¿Trabaja actualmente su cónyuge?", 
+      "Lugar de trabajo del cónyuge", "Cargo o posición del cónyuge", "Teléfono del cónyuge", "¿Tienes hijos?", 
+      "Nombre completo del hijo(a)", "Fecha de nacimiento del hijo(a)", "¿Tienes otros dependientes que habiten en su hogar?", 
+      "Nombre completo del dependiente", "Tipo de dependencia", 
+      "¿Tiene algún familiar con discapacidad que dependa de usted directamente?", 
+      "Parentesco del familiar con discapacidad", "Diagnostico de discapacidad del familiar", 
+      "Nivel académico alcanzado", "Título odtenido", "Institución educativa o centro de estudio", 
+      "País donde obtuvo el título", "¿Está inscrito en la universidad actualmente?", "Nombre de la Universidad", 
+      "Carrera en curso", "Año de estudio que cursa actualmente", "Títulos Universitarios que posee", 
+      "Certificaciones locales o internacionales", "Idiomas que maneja", "¿Qué otro idioma conoces?", 
+      "Nivel de dominio oral", "Nivel de dominio de escritura", "Nivel de dominio de lectura", 
+      "¿Ha tenido otro empleo antes de entrar a Banco Davivienda?", 
+      "¿Cuantos empleos ha tenido antes de entrar a Banco Davivienda?", 
+      "Nombre de la empresa 1 donde laboró antes de entrar a Banco Davivienda", 
+      "Cargo desempeñado en la empresa 1", "Principales funciones realizadas en la empresa 1", 
+      "Fecha de ingreso a la empresa 1", "Fecha de retiro de la empresa 1", "Motivo del retiro de la empresa 1", 
+      "Nombre de la empresa 2 donde laboró anteriormente", "Cargo desempeñado en la empresa 2", 
+      "Principales funciones realizadas en la empresa 2", "Fecha de ingreso a la empresa 2", 
+      "Fecha de retiro de la empresa 2", "Motivo del retiro de la empresa 2", 
+      "Nombre de la empresa 3 donde laboró anteriormente", "Cargo desempeñado en la empresa 3", 
+      "Principales funciones realizadas en la empresa 3", "Fecha de ingreso a la empresa 3", 
+      "Fecha de retiro de la empresa 3", "Motivo del retiro de la empresa 3", "Tipo de vivienda que habita", 
+      "¿Posee activos inmobiliarios propios o mancomunados?", "Tipo de activo inmobiliario", 
+      "¿Qué tipo de inmobiliario posee?", "Valor estimdo del activo inmobiliario", "¿Es el activo mancomunado?", 
+      "Nombre del propietario", "¿Posee automóvil o motocicleta?", "Tipo de vehículo", 
+      "¿Que tipo de vehículo posee?", "Marca del vehículo", "Modelo del vehículo", "Año del vehículo", 
+      "Color del vehículo", "Número de placa del vehículo", "¿Posee más vehículos?", "Tipo de vehículo", 
+      "¿Que tipo de vehículo posee?", "Marca del vehículo", "Modelo del vehículo", "Año del vehículo", 
+      "Color del vehículo", "Número de placa del vehículo", 
+      "¿Cuenta con ingresos adicionales fuera de su trabajo actual?", 
+      "Concepto o motivo de los ingresos adicionales", "¿A qué tipo de concepto pertenece tus ingresos adicionales?", 
+      "Monto mensual estimado de ingresos adicionales", "Recurrencia de los ingresos extra", 
+      "¿Está empleado fuera del banco actualmente?", "Nombre de la empresa externa", "Salario percibido", 
+      "¿Tiene productos activos con el Banco Davivienda?", "Selecciona los productos activos que posee", 
+      "¿Cuenta con obligaciones financieras en otras instituciones?", 
+      "¿Posee embargos, pensión alimenticia o juicios en proceso?", "Detalle del proceso legal y monto", 
+      "¿Tiene familiares que laboren en alguna empresa del Grupo Bolívar/Davivienda?", 
+      "Nombre del familiar en la empresa", "Parentesco que ocupa el familiar", "Cargo que ocupa el familiar", 
+      "¿Tiene familiares que sean proveedores o competencia directa del Grupo?", 
+      "Nombre del familiar relacionado con proveedores/competencia", "Empresa donde labora dicho familiar", 
+      "% accionario si lo posee", "¿Es usted socio, directivo o representante legal de alguna sociedad?", 
+      "Nombre de la sociedad y actividad económica", "Condición en la sociedad (Socio, Representante, accionista%)", 
+      "¿Es integrante de alguna organización sin fines de lucro o fundación?", 
+      "¿Es usted o algún familiar una persona Expuesta Políticamente (PEP)?", "Nombre del PEP", 
+      "Cargo del PEP", "País del PEP", 
+      "¿Ha participado en la aprobación de créditos para familiares o empresas relacionadas?", 
+      "¿Existen proveedores del banco con los que usted tenga una relación personal o comercial?", 
+      "¿Ha recibido obsequios o invitaciones mayores a $100 de proveedores en los últimos 12 meses?", 
+      "Escriba una breve descripción del obsequio que recibió", "¿dio aviso a su jefe inmediato o a cumplimiento?", 
+      "¿Ha estado involucrado en la venta de activos del banco donde exista un posible conflicto de interés?", 
+      "¿Declara que ha sido informado sobre el Código de Ética y Políticas de Prevención de Corrupción?", 
+      "¿Declara que toda la información aquí proporcionada es verídica y completa?", 
+      "Recomendaciones, sugerencias, o explicaciones adicionales que desee aportar"
+    ];
+
+    if (hoja.getLastRow() === 0) {
+      hoja.appendRow(ORDEN_LOGICO);
+      hoja.getRange(1, 1, 1, ORDEN_LOGICO.length).setFontWeight("bold").setBackground("#EFEFEF");
+    }
+
+    const filaFinal = ORDEN_LOGICO.map(header => {
+      if (header === "Fecha de Registro") return new Date();
+      if (header === "Aceptó Ley 81") return "Sí";
+      return datos[header] || ""; 
+    });
+
+    hoja.appendRow(filaFinal);
+    return ContentService.createTextOutput(JSON.stringify({"status": "success"}))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (e) {
+    return ContentService.createTextOutput(JSON.stringify({"status": "error", "message": e.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// Para que la hoja siempre mantenga su sistema de Login interno si lo necesitas
+function registrarUsuario(email, identificacion) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let hoja = ss.getSheetByName('Usuarios') || ss.insertSheet('Usuarios');
+  if (hoja.getLastRow() === 0) hoja.appendRow(["Email", "Identificación", "Fecha Registro"]);
+  const datos = hoja.getDataRange().getValues();
+  if (datos.some(fila => fila[0] === email)) return "El correo ya está registrado.";
+  hoja.appendRow([email, "'" + identificacion, new Date()]); 
+  return "Registro exitoso. Ahora puedes iniciar sesión.";
+}
+
+function loginUsuario(email, identificacion) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const hoja = ss.getSheetByName('Usuarios');
+  if (!hoja) return false;
+  const datos = hoja.getDataRange().getValues();
+  return datos.some(fila => fila[0].toLowerCase() === email.toLowerCase() && fila[1].toString() === identificacion.toString());
+}
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
+    
+   
+    .auth-container { max-width: 450px; margin: 60px auto; background: white; padding: 35px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 5px solid #dc3545; }
+    
+
+    .sidebar { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: sticky; top: 20px; }
+    .nav-item-custom { padding: 12px 15px; border-radius: 8px; margin-bottom: 8px; color: #6c757d; font-size: 0.9rem; transition: 0.3s; font-weight: 500; border-left: 4px solid transparent; }
+    .nav-item-custom.active { background-color: #fff1f1; color: #dc3545 !important; border-left: 4px solid #dc3545; font-weight: bold; }
+    .nav-item-custom.completed { color: #198754; }
+
+    
+    .seccion-form { display: none; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .seccion-form.activa { display: block; animation: fadeIn 0.4s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .pregunta-oculta { display: none; border-left: 4px solid #dc3545; padding-left: 15px; background-color: #fff8f8; padding: 10px; margin-top: 5px; }
+    .progress { height: 10px; margin-bottom: 25px; border-radius: 6px; display: none; }
+    h3 { color: #dc3545; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 25px; }
+    .btn-davivienda { background-color: #dc3545; color: white; border: none; font-weight: bold; padding: 10px 25px; }
+    .btn-davivienda:hover { background-color: #b02a37; color: white; }
+    #map { height: 350px; width: 100%; border-radius: 10px; border: 2px solid #ddd; margin-top: 10px; }
+    .link-auth { cursor: pointer; color: #0d6efd; text-decoration: underline; font-weight: bold; }
+    
+    .logo-container { text-center; margin-bottom: 20px; }
+    .logo-img { max-height: 50px; width: auto; }
+  </style>
+</head>
+<body>
+
+<div class="container-fluid py-4" style="max-width: 1200px;">
+  
+  <div id="auth-login" class="auth-container">
+    <div class="text-center mb-4">
+      <img src="https://logodownload.org/wp-content/uploads/2019/08/davivienda-logo.png" class="logo-img">
+    </div>
+    <h3 class="text-center mb-4">Iniciar Sesión</h3>
+    <div class="mb-3"><label>Correo Corporativo</label><input type="email" id="login-email" class="form-control"></div>
+    <div class="mb-4"><label>Número de Identificación</label><input type="password" id="login-id" class="form-control"></div>
+    <button class="btn btn-davivienda w-100 mb-3" onclick="intentarLogin()">Entrar</button>
+    <p class="text-center small">¿No tienes cuenta? <span class="link-auth" onclick="mostrarRegistro()">Regístrate</span></p>
+  </div>
+
+  <div id="auth-registro" class="auth-container" style="display:none;">
+    <div class="text-center mb-4">
+      <img src="https://logodownload.org/wp-content/uploads/2019/08/davivienda-logo.png" class="logo-img">
+    </div>
+    <h3 class="text-center mb-4">Registro</h3>
+    <div class="mb-3"><label>Correo Electrónico</label><input type="email" id="reg-email" class="form-control"></div>
+    <div class="mb-4"><label>Número de Identificación</label><input type="text" id="reg-id" class="form-control"></div>
+    <button class="btn btn-davivienda w-100 mb-3" onclick="intentarRegistro()">Crear Cuenta</button>
+    <p class="text-center small">¿Ya tienes cuenta? <span class="link-auth" onclick="mostrarLogin()">Inicia sesión</span></p>
+  </div>
+
+  <div id="main-content" style="display:none;">
+    <div class="row">
+      
+      <div class="col-md-3">
+        <div class="sidebar">
+          <div class="text-center mb-4">
+            <img src="https://logodownload.org/wp-content/uploads/2019/08/davivienda-logo.png" class="logo-img">
+          </div>
+          <hr>
+          <div class="progress" id="barra-progreso"><div id="bar" class="progress-bar bg-success" style="width: 0%"></div></div>
+          <div id="sidebar-menu">
+             </div>
+        </div>
+      </div>
+
+      <div class="col-md-9">
+        
+        <div id="sec-terminos" class="seccion-form activa">
+          <h3>Términos y Condiciones (Ley 81)</h3>
+          <div class="card bg-light mb-4"><div class="card-body small text-justify">Declaro que la información suministrada en este documento es verídica en todos los aspectos y que de acuerdo a la Ley 81 sobre el Tratamiento de Información de datos Personales, autorizo a Grupo Bolívar a verificar e investigar por otros medios la veracidad de la misma. Reconozco y estoy de acuerdo que la falsificación u omisión de cualquier información será considerada una falta grave.</div></div>
+          <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" id="checkTerminos" style="width: 22px; height: 22px;">
+            <label class="form-check-label fw-bold ms-2" for="checkTerminos">Acepto los términos.</label>
+          </div>
+          <button type="button" class="btn btn-davivienda px-5" onclick="iniciarFormulario()">Comenzar</button>
+        </div>
+
+        <form id="mainForm" onchange="chequearLogica()">
+          <div id="contenedor-secciones" style="display:none;"></div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+
+<script>
+let usuarioEmail = "";
+let seccionActual = 0;
+let mapa, marcador;
+
+const CONFIG_FORMULARIO = [
+  {
+    titulo: "1. Información Personal",
+    preguntas: [
+      { id: "nombre_completo", label: "Nombre completo", tipo: "text", requerido: true },
+      { id: "num_empleado", label: "Número de empleado (Peoplesoft/Colaborador)", tipo: "text", requerido: true },
+      { id: "tipo_doc", label: "Tipo de documento de identidad", tipo: "select", opciones: ["DUI", "Cédula", "Pasaporte", "Otro"], requerido: true },
+      { id: "num_doc", label: "Número de documento de identidad", tipo: "text", requerido: true },
+      { id: "Fecha_nacimiento", label: "Fecha de nacimiento", tipo: "date", requerido: true },
+      { id: "lugar_nacimiento", label: "Lugar de nacimiento", tipo:"text", requerido: true },
+      { id: "genero", label: "Género", tipo: "radio", opciones: ["Femenino", "Masculino"], requerido: true },
+      { id: "estado_civil", label: "Estado civil actual", tipo: "select", opciones: ["Soltero(a)", "Casado(a)", "Acompañado(a)", "Viudo(a)", "Divorciado(a)) "], requerido: true },
+      { id: "profesion", label: "Profesión u oficio", tipo: "text", requerido: true },
+      { id: "puesto", label: "Puesto que desempeña actualmente", tipo: "text", requerido: true },
+      { id: "dep", label: "Departamento al que pertenece", tipo: "text", requerido: true },
+      { id: "Modalidad_trabajo", label: "Modalidad actual de trabajo", tipo: "select", opciones: ["Presencial", "Híbrido", "Remoto"], requerido: true },
+      { id: "tel_celular", label: "Teléfono Celular", tipo: "text", requerido: true },
+      { id: "tel_corporativo", label: "Teléfono Corporativo", tipo: "text" },
+      { id: "departamento", label: "Departamento/Provincia de domicilio", tipo: "text", requerido: true },
+      { id: "direccion_text", label: "Dirección de domicilio", tipo: "textarea", requerido: true },
+      { id: "gps", label: "Coordenadas GPS", tipo: "mapa" } // TIPO ESPECIAL MAPA
+    ]
+  },
+  {
+    titulo: "2. Salud y Contactos de Emergencia",
+    preguntas: [
+      { id: "tipo_sangre", label: "Tipo de sangre", tipo: "text" },
+      { id: "donante", label: "¿Es donante de sangre?", tipo: "radio", opciones: ["Si", "No"] },
+      { id: "discapacidad", label: "¿Posee alguna discapacidad temporal o permanente?", tipo: "radio", opciones: ["Si", "No"]},
+      { id: "discapacidad_diag", label: "Diagnostico de discapacidad", tipo: "text", dependeDe: "discapacidad", valorPadre: "Si" },
+      { id: "enfermedad_cronica", label: "¿Tiene alguna enfermedad o condición crónica?", tipo: "radio", opciones: ["Si", "No"]},
+      { id: "diag_enfermedad_cronica", label: "Diagnostico de la condición crónica", tipo: "text",dependeDe: "enfermedad_cronica", valorPadre: "Si" },
+      { id: "atencion_especial", label: "¿Padece de alguna enfermedad que requiera atención especial en caso de emergencia?", tipo: "radio", opciones: ["Si", "No"] },
+      { id: "nom_padecimiento", label: "Nombre de la enfermedad o padecimiento para atención en emergencia", tipo: "text", dependeDe: "atencion_especial", valorPadre: "Si" },
+      { id: "medicamento", label: "¿Toma algún medicamento de forma permanente?", tipo: "radio", opciones: ["Si", "No"] },
+      { id: "nom_medi", label: "Nombre del medicamento que toma permanentemente", tipo: "text", dependeDe: "medicamento", valorPadre: "Si" },
+      { id: "alergias", label: "¿Es alérgico/a a algún producto o medicamento?", tipo: "radio", opciones: ["Si", "No"] },
+      { id: "nom_alergias", label: "Nombre de los productos o medicamentos a los que es alérgico/a", tipo: "text", dependeDe: "alergias", valorPadre: "Si" },
+      { id: "lentes", label: "¿Utiliza lentes por recomendación de un oftalmólogo?", tipo: "radio", opciones: ["Si", "No"] },
+      { id: "nombre_contacto1", label: "Nombre completo de contacto de emergencia 1", tipo: "text" },
+      { id: "parentesco_contacto1", label: "Parentesco del contacto de emergencia 1", tipo: "select", opciones: ["Madre", "Padre", "Hermano(a)", "Tío(a)", "Abuelo(a)", "Otro"] },
+      { id: "tipo_parentesco1", label: "¿Que tipo de parentesco es?", tipo: "text", dependeDe: "parentesco_contacto1", valorPadre: "Otro" },
+      { id: "tel_contacto1", label: "Teléfono del contacto de emergencia 1", tipo: "text" },
+      { id: "direccion_contacto1", label: "Dirección de residencia del contacto de emergencia 1", tipo: "text" },
+      { id: "nombre_contacto2", label: "Nombre completo de contacto de emergencia 2", tipo: "text" },
+      { id: "parentesco_contacto2", label: "Parentesco del contacto de emergencia 2", tipo: "select", opciones: ["Madre", "Padre", "Hermano(a)", "Tío(a)", "Abuelo(a)", "Otro"] },
+      { id: "tipo_parentesco2", label: "¿Que tipo de parentesco es?", tipo: "text", dependeDe: "parentesco_contacto2", valorPadre: "Otro" },
+      { id: "tel_contacto2", label: "Teléfono del contacto de emergencia 2", tipo: "text" },
+      { id: "direccion_contacto2", label: "Dirección de residencia del contacto de emergencia 2", tipo: "text" }
+    ]
+  },
+  {
+    titulo: "3. Grupo Familiar",
+    preguntas: [
+      { id: "Nombre_conyuge", label: "Nombre completo del cónyuge o compañero (a)", tipo: "text", dependeDe: "estado_civil", valorPadre: ["Casado(a)", "Acompañado(a)"] },
+      { id: "identificacion_conyuge", label: "Número de identificación del cónyuge", tipo: "text", dependeDe: "estado_civil", valorPadre: ["Casado(a)", "Acompañado(a)"] },
+      { id: "nacimiento_conyuge", label: "Fecha de nacimiento del cónyuge", tipo: "date", dependeDe: "estado_civil", valorPadre: ["Casado(a)", "Acompañado(a)"] },
+      { id: "trabajo_conyuge", label: "¿Trabaja actualmente su cónyuge?", tipo: "radio", opciones: ["Si", "No"], dependeDe: "estado_civil", valorPadre: ["Casado(a)", "Acompañado(a)"] },
+      { id: "lugar_trabajo_conyuge", label: "Lugar de trabajo del cónyuge", tipo: "text", dependeDe: "trabajo_conyuge", valorPadre: "Si" },
+      { id: "cargo_conyuge", label: "Cargo o posición del cónyuge", tipo: "text", dependeDe: "trabajo_conyuge", valorPadre: "Si" },
+      { id: "tel_conyuge", label: "Teléfono del cónyuge", tipo: "text", dependeDe: "estado_civil", valorPadre: ["Casado(a)", "Acompañado(a)"] },
+      { id: "hijos", label: "¿Tienes hijos?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_hijo", label: "Nombre completo del hijo(a)", tipo: "text", dependeDe: "hijos", valorPadre: "Si" },
+      { id: "fecha_hijo", label: "Fecha de nacimiento del hijo(a)", tipo: "date", dependeDe: "hijos", valorPadre: "Si" },
+      { id: "dependientes", label: "¿Tienes otros dependientes que habiten en su hogar?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_dependiente", label: "Nombre completo del dependiente", tipo: "text", dependeDe: "dependientes", valorPadre: "Si" },
+      { id: "tipo_dependencia", label: "Tipo de dependencia", tipo: "radio", opciones: ["Parcial", "Completa"], dependeDe: "dependientes", valorPadre: "Si" },
+      { id: "familiar_discapacidad", label: "¿Tiene algún familiar con discapacidad que dependa de usted directamente?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "parentesco", label: "Parentesco del familiar con discapacidad", tipo: "select", opciones: ["Madre", "Padre", "Hermano(a)", "Tío(a)", "Abuelo(a)"], dependeDe: "familiar_discapacidad", valorPadre: "Si" },
+      { id: "diag_familiar", label: "Diagnostico de discapacidad del familiar", tipo: "text", dependeDe: "familiar_discapacidad", valorPadre: "Si" }
+    ]
+  },
+  {
+    titulo: "4. Información educativa",
+    preguntas: [
+      { id: "nivel_academico", label: "Nivel académico alcanzado", tipo: "select", opciones: ["Bachillerato", "Técnico", "Universidad", "Maestría", "Posgrado", "Doctorado"], requerido: true },
+      { id: "titulo", label: "Título odtenido", tipo: "text", requerido: true },
+      { id: "institucion", label: "Institución educativa o centro de estudio", tipo: "text", requerido: true },
+      { id: "pais", label: "País donde obtuvo el título", tipo: "text", requerido: true },
+      { id: "año", label: "Año de graduación", tipo: "text", requerido: true },
+      { id: "universidad", label: "¿Está inscrito en la universidad actualmente?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_uni", label: "Nombre de la Universidad", tipo: "text", dependeDe: "universidad", valorPadre: "Si" },
+      { id: "carrera", label: "Carrera en curso", tipo: "text", dependeDe: "universidad", valorPadre: "Si" },
+      { id: "año_uni", label: "Año de estudio que cursa actualmente", tipo: "text", dependeDe: "universidad", valorPadre: "Si" },
+      { id: "titulos", label: "Títulos Universitarios que posee", tipo: "text", requerido: true },
+      { id: "certificaciones", label: "Certificaciones locales o internacionales", tipo: "text", requerido: true },
+      { id: "idiomas", label: "Idiomas que maneja", tipo: "select", opciones: ["Inglés", "Francés", "Portugués", "Español", "Otro"], requerido: true },
+      { id: "otro_idioma", label: "¿Qué otro idioma conoces?", tipo: "text", dependeDe: "idiomas", valorPadre: "Otro" },
+      { id: "oral", label: "Nivel de dominio oral", tipo: "radio", opciones: ["Básico", "Intermedio", "Avanzado", "Nativo"], requerido: true },
+      { id: "escrito", label: "Nivel de dominio de escritura", tipo: "radio", opciones: ["Básico", "Intermedio", "Avanzado", "Nativo"], requerido: true },
+      { id: "lectura", label: "Nivel de dominio de lectura", tipo: "radio", opciones: ["Básico", "Intermedio", "Avanzado", "Nativo"], requerido: true }
+    ]
+  },
+  {
+    titulo: "5. Experiencia Laboral",
+    preguntas: [
+      { id: "antes", label: "¿Ha tenido otro empleo antes de entrar a Banco Davivienda?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "cantidad_empleos", label: "¿Cuantos empleos ha tenido antes de entrar a Banco Davivienda?", tipo: "select", opciones: ["1", "2", "3", "Más de 3"], dependeDe: "antes", valorPadre: "Si" },
+      { id: "nombre_fuera1", label: "Nombre de la empresa 1 donde laboró antes de entrar a Banco Davivienda", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["1", "2", "3", "Más de 3"] },
+      { id: "cargo_fuera1", label: "Cargo desempeñado en la empresa 1", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["1", "2", "3", "Más de 3"] },
+      { id: "funciones_fuera1", label: "Principales funciones realizadas en la empresa 1", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["1", "2", "3", "Más de 3"] },
+      { id: "fecha_ingreso1", label: "Fecha de ingreso a la empresa 1", tipo: "date", dependeDe: "cantidad_empleos", valorPadre: ["1", "2", "3", "Más de 3"] },
+      { id: "fecha_retiro1", label: "Fecha de retiro de la empresa 1", tipo: "date", dependeDe: "cantidad_empleos", valorPadre: ["1", "2", "3", "Más de 3"] },
+      { id: "motivo1", label: "Motivo del retiro de la empresa 1", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["1", "2", "3", "Más de 3"]},
+      { id: "nombre_fuera2", label: "Nombre de la empresa 2 donde laboró anteriormente", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["2", "3", "Más de 3"] },
+      { id: "cargo_fuera2", label: "Cargo desempeñado en la empresa 2", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["2", "3", "Más de 3"] },
+      { id: "funciones_fuera2", label: "Principales funciones realizadas en la empresa 2", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["2", "3", "Más de 3"] },
+      { id: "fecha_ingreso2", label: "Fecha de ingreso a la empresa 2", tipo: "date", dependeDe: "cantidad_empleos", valorPadre: ["2", "3", "Más de 3"] },
+      { id: "fecha_retiro2", label: "Fecha de retiro de la empresa 2", tipo: "date", dependeDe: "cantidad_empleos", valorPadre: ["2", "3", "Más de 3"] },
+      { id: "motivo2", label: "Motivo del retiro de la empresa 2", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["2", "3", "Más de 3"]},
+      { id: "nombre_fuera3", label: "Nombre de la empresa 3 donde laboró anteriormente", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["3","Más de 3"] },
+      { id: "cargo_fuera3", label: "Cargo desempeñado en la empresa 3", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["3","Más de 3"] },
+      { id: "funciones_fuera3", label: "Principales funciones realizadas en la empresa 3", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["3","Más de 3"] },
+      { id: "fecha_ingreso3", label: "Fecha de ingreso a la empresa 3", tipo: "date", dependeDe: "cantidad_empleos", valorPadre: ["3","Más de 3"] },
+      { id: "fecha_retiro3", label: "Fecha de retiro de la empresa 3", tipo: "date", dependeDe: "cantidad_empleos", valorPadre: ["3","Más de 3"] },
+      { id: "motivo3", label: "Motivo del retiro de la empresa 3", tipo: "text", dependeDe: "cantidad_empleos", valorPadre: ["3","Más de 3"] }
+    ]
+  },
+  {
+    titulo: "6. Información sobre vivienda y  vehículos",
+    preguntas: [
+      { id: "tipo_vivienda", label: "Tipo de vivienda que habita", tipo: "radio", opciones: ["Propia", "Alquilada", "Hipotecada", "Familiar"], requerido: true },
+      { id: "inmoviliario", label: "¿Posee activos inmobiliarios propios o mancomunados?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "tipo_inmoviliario", label: "Tipo de activo inmobiliario", tipo: "radio", opciones: ["Casas", "Terrenos", "Otro"], dependeDe: "inmoviliario", valorPadre: "Si" },
+      { id: "otro_tipo", label: "¿Qué tipo de inmobiliario posee?", tipo: "text", dependeDe: "tipo_inmoviliario", valorPadre: "Otro" },
+      { id: "Valor", label: "Valor estimdo del activo inmobiliario", tipo: "text", dependeDe: "inmoviliario", valorPadre: "Si", dependeDe: "tipo_inmoviliario", ValorPare: "Otro" },
+      { id: "mancomunado", label: "¿Es el activo mancomunado?", tipo: "radio", opciones: ["Si", "No"], dependeDe: "inmoviliario", vaorPadre: "Si", dependeDe: "tipo_inmoviliario", valorPadre: "Otro" },
+      { id: "propietario", label: "Nombre del propietario", tipo: "text", dependeDe: "mancomunado", valorPadre: "Si" },
+      { id: "vehiculos", label: "¿Posee automovil o motocicleta?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "tipo_vehiculo", label: "Tipo de vehículo", tipo: "radio", opciones: ["automovil", "Motocicleta", "Otro"], dependeDe: "vehiculos", valorPadre: "Si", requerido: true },
+      { id: "otro_tipo1", label: "¿Que tipo de vehículo posee?", tipo: "text", dependeDe: "tipo_vehiculo", valorPadre: "Otro" },
+      { id: "marca", label: "Marca del vehículo", tipo: "text", dependeDe: "vehiculos", valorPadre: "Si" },
+      { id: "modelo_vehiculos", label: "Modelo del vehículo", tipo: "text", dependeDe: "vehiculos", valorPadre: "Si" },
+      { id: "año_vehiculo", label: "Año del vehículo", tipo: "text", dependeDe: "vehiculos", valorPadre: "Si" },
+      { id: "color", label: "Color del vehículo", tipo: "text", dependeDe: "vehiculos", valorPadre: "Si" },
+      { id: "numero_placa", label: "Número de placa del vehículo", tipo: "text", dependeDe: "vehiculos", valorPadre: "Si" },
+      { id: "mas_vehiculos", label: "¿Posee más vehículos?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "tipo_vehiculo2", label: "Tipo de vehículo", tipo: "radio", opciones: ["automovil", "Motocicleta", "Otro"], dependeDe: "mas_vehiculos", valorPadre: "Si", requerido: true },
+      { id: "otro_tipo2", label: "¿Que tipo de vehículo posee?", tipo: "text", dependeDe: "tipo_vehiculo2", valorPadre: "Otro" },
+      { id: "marca2", label: "Marca del vehículo", tipo: "text", dependeDe: "mas_vehiculos", valorPadre: "Si" },
+      { id: "modelo_vehiculos2", label: "Modelo del vehículo", tipo: "text", dependeDe: "mas_vehiculos", valorPadre: "Si" },
+      { id: "año_vehiculo2", label: "Año del vehículo", tipo: "text", dependeDe: "mas_vehiculos", valorPadre: "Si" },
+      { id: "color2", label: "Color del vehículo", tipo: "text", dependeDe: "mas_vehiculos", valorPadre: "Si" },
+      { id: "numero_placa2", label: "Número de placa del vehículo", tipo: "text", dependeDe: "mas_vehiculos", valorPadre: "Si" }
+    ]
+  },
+  {
+    titulo: "7. Ingresos extra y otros datos financieros",
+    preguntas: [
+      { id: "ingresos_adicionales", label: "¿Cuenta con ingresos adicionales fuera de su trabajo actual?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "concepto_ingresos", label: "Concepto o motivo de los ingresos adicionales", tipo: "radio", opciones: ["Alquileres", "asesorías", "Otro"], dependeDe: "ingresos_adicionales", valorPadre: "Si", requerido: true },
+      { id: "otro_concepto", label: "¿A qué tipo de concepto pertenece tus ingresos adicionales?", tipo: "text", dependeDe: "concepto_ingresos", valorPadre: "Otro", requerido: true },
+      { id: "monto_mensual", label: "Monto mensual estimado de ingresos adicionales", tipo: "text", dependeDe: "ingresos_adicionales", valorPadre: "Si" },
+      { id: "recurrencia", label: "Recurrencia de los ingresos extra", tipo: "radio", opciones: ["Semanal", "Mensual", "Semestral", "Anual"], dependeDe: "ingresos_adicionales", valorPadre: "Si", requerido: true },
+      { id: "fuera_banco", label: "¿Está empleado fuera del banco actualmente?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_empresa_afuera", label: "Nombre de la empresa externa", tipo: "text", dependeDe: "fuera_banco", valorPAdre: "Si" },
+      { id: "salario_empresa_afuera", label: "Salario percibido", tipo: "text", dependeDe: "fuera_banco", valorPadre: "Si" },
+      { id: "productos_activos", label: "¿Tiene productos activos con el Banco Davivienda?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "seleccion_productos", label: "Selecciona los productos activos que posee", tipo: "radio", opciones: ["Seguros", "Prestamos", "Hipotecas"], dependeDe: "productos_activos", valorPadre: "Si" },
+      { id: "obligaciones", label: "¿Cuenta con obligaciones financieras en otras instituciones?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "procesos", label: "¿Posee embargos, pensión alimenticia o juicios en proceso?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "detalle_proceso", label: "Detalle del proceso legal y monto", tipo: "text", dependeDe: "procesos", valorPadre: "Si" }
+    ]
+  },
+  {
+    titulo: "8. Conflictos de Interes",
+    preguntas: [
+       { id: "familiares_laborando", label: "¿Tiene familiares que laboren en alguna empresa del Grupo Bolívar/Davivienda?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_familiar_empresa", label: "Nombre del familiar en la empresa", tipo: "text", dependeDe: "familiares_laborando", valorPadre: "Si" },
+      { id: "parentesco_familiar_laborando", label: "Parentesco que ocupa el familiar", tipo: "text", dependeDe: "familiares_laborando", valorPadre: "Si" },
+      { id: "Cargo_familiar_laborando", label: "Cargo que ocupa el familiar", tipo: "text", dependeDe: "familiares_laborando", valorPadre: "Si" },
+      { id: "familiares_proveedores", label: "¿Tiene familiares que sean proveedores o competencia directa del Grupo?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_familiar_proveedor", label: "Nombre del familiar relacionado con proveedores/competencia", tipo: "text", dependeDe: "familiares_proveedores", valorPadre: "Si" },
+      { id: "empresa_familiar_proveedor", label: "Empresa donde labora dicho familiar", tipo: "text", dependeDe: "familiares_proveedores", valorPadre: "Si" },
+      { id: "accionario", label: "% accionario si lo posee", tipo: "text", dependeDe: "familiares_proveedores", valorPadre: "Si" },
+      { id: "socio_legal", label: "¿Es usted socio, directivo o representante legal de alguna sociedad?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_sociedad", label: "Nombre de la sociedad y actividad económica", tipo: "text", dependeDe: "socio_legal", valorPadre: "Si" },
+      { id: "condicion_sociedad", label: "Condición en la sociedad (Socio, Representante, accionista%)", tipo: "text", dependeDe: "socio_legal", valorPadre: "Si" },
+      { id: "organizacion", label: "¿Es integrante de alguna organización sin fines de lucro o fundación?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "persona_expuesta", label: "¿Es usted o algún familiar una persona Expuesta Políticamente (PEP)?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "nombre_persona_externa", label: "Nombre del PEP", tipo: "text", dependeDe: "persona_expuesta", valorPadre: "Si" },
+      { id: "cargo_persona_externa", label: "Cargo del PEP", tipo: "text", dependeDe: "persona_expuesta", valorPadre: "Si" },
+      { id: "pais_persona_externa", label: "País del PEP", tipo: "text", dependeDe: "persona_expuesta", valorPadre: "Si" },
+      { id: "creditos_familia", label: "¿Ha participado en la aprobación de créditos para familiares o empresas relacionadas?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "proveedores_banco", label: "¿Existen proveedores del banco con los que usted tenga una relación personal o comercial?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "obsequios", label: "¿Ha recibido obsequios o invitaciones mayores a $100 de proveedores en los últimos 12 meses?", tipo: "radio", opciones: ["Si", "No"], requerido: true },
+      { id: "desc_obsequios", label: "Escriba una breve descripción del obsequio que recibió", tipo: "text", dependeDe: "obsequios", valorPadre: "Si" },
+      { id: "aviso_jefe", label: "¿dio aviso a su jefe inmediato o a cumplimiento?", tipo: "radio", opciones: ["Si", "No"], dependeDe: "obsequios", valorPadre: "Si" },
+      { id: "venta_activos", label: "¿Ha estado involucrado en la venta de activos del banco donde exista un posible conflicto de interés?", tipo: "radio", opciones: ["Si", "No"], requerido: true }
+    ]
+  },
+  {
+    titulo: "9. Declaraciones Finales",
+    preguntas: [
+      { id: "infrmacion_etica", label: "¿Declara que ha sido informado sobre el Código de Ética y Políticas de Prevención de Corrupción?", tipo: "radio", opciones: ["Acepto"], requerido: true },
+      { id: "info_proporcionada", label: "¿Declara que toda la información aquí proporcionada es verídica y completa?", tipo: "radio", opciones: ["Acepto"], requerido: true },
+      { id: "recomendaciones", label: "Recomendaciones, sugerencias, o explicaciones adicionales que desee aportar", tipo: "text" }
+    ]
+  }
+];
+
+
+function mostrarRegistro() { document.getElementById('auth-login').style.display='none'; document.getElementById('auth-registro').style.display='block'; }
+function mostrarLogin() { document.getElementById('auth-registro').style.display='none'; document.getElementById('auth-login').style.display='block'; }
+
+function intentarRegistro() {
+  const email = document.getElementById('reg-email').value;
+  const id = document.getElementById('reg-id').value;
+  if(!email || !id) return alert("Por favor complete los campos.");
+  google.script.run.withSuccessHandler(res => { alert(res); mostrarLogin(); }).registrarUsuario(email, id);
+}
+
+function intentarLogin() {
+  const email = document.getElementById('login-email').value;
+  const id = document.getElementById('login-id').value;
+  google.script.run.withSuccessHandler(valido => {
+    if(valido) {
+      usuarioEmail = email;
+      document.getElementById('auth-login').style.display='none';
+      document.getElementById('main-content').style.display='block';
+      generarSidebar();
+    } else alert("Credenciales incorrectas.");
+  }).loginUsuario(email, id);
+}
+
+
+function generarSidebar() {
+  const menu = document.getElementById('sidebar-menu');
+  menu.innerHTML = CONFIG_FORMULARIO.map((sec, i) => `
+    <div id="side-item-${i}" class="nav-item-custom ${i === seccionActual ? 'active' : ''}">
+      ${i + 1}. ${sec.titulo}
+    </div>
+  `).join('');
+}
+
+function iniciarFormulario() {
+  if (document.getElementById('checkTerminos').checked) {
+    document.getElementById('sec-terminos').style.display = 'none';
+    document.getElementById('contenedor-secciones').style.display = 'block';
+    document.getElementById('barra-progreso').style.display = 'flex';
+    renderizar();
+  } else alert("Debe aceptar los términos.");
+}
+
+function renderizar() {
+  const container = document.getElementById('contenedor-secciones');
+  container.innerHTML = "";
+  CONFIG_FORMULARIO.forEach((sec, idx) => {
+    let html = `<div id="sec-${idx}" class="seccion-form ${idx === seccionActual ? 'activa' : ''}"><h3>${sec.titulo}</h3>`;
+    sec.preguntas.forEach(p => {
+      let depClass = p.dependeDe ? 'pregunta-oculta' : '';
+      html += `<div class="mb-3 ${depClass}" id="div-${p.id}"><label class="form-label fw-bold">${p.label}</label>`;
+      
+      if(p.tipo === 'mapa') {
+        html += `<div id="map"></div><input type="hidden" name="${p.id}" id="input-gps">`;
+      } else if(p.tipo === 'text' || p.tipo === 'email' || p.tipo === 'date') {
+        html += `<input type="${p.tipo}" name="${p.id}" class="form-control" ${p.requerido ? 'data-req="true"' : ''}>`;
+      } else if(p.tipo === 'textarea') {
+        html += `<textarea name="${p.id}" class="form-control" rows="2"></textarea>`;
+      } else if(p.tipo === 'select') {
+        html += `<select name="${p.id}" class="form-select" ${p.requerido ? 'data-req="true"' : ''}><option value="">Seleccione...</option>${p.opciones.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+      } else if(p.tipo === 'radio') {
+        p.opciones.forEach(o => { html += `<div class="form-check"><input class="form-check-input" type="radio" name="${p.id}" value="${o}"><label class="form-check-label">${o}</label></div>`; });
+      }
+      html += `</div>`;
+    });
+    html += `<div class="mt-4 d-flex justify-content-between">`;
+    if(idx > 0) html += `<button type="button" class="btn btn-secondary" onclick="navegar(-1)">Anterior</button>`;
+    if(idx < CONFIG_FORMULARIO.length - 1) html += `<button type="button" class="btn btn-davivienda" onclick="navegar(1)">Siguiente</button>`;
+    else html += `<button type="button" id="btnEnviar" class="btn btn-success" onclick="finalizar()">Enviar Actualización</button>`;
+    html += `</div></div>`;
+    container.innerHTML += html;
+  });
+  
+  if(CONFIG_FORMULARIO[seccionActual].preguntas.some(p => p.tipo === 'mapa')) setTimeout(initMapa, 500);
+  actualizarBarra();
+}
+
+function initMapa() {
+  const pos = { lat: 13.689, lng: -89.187 }; 
+  mapa = new google.maps.Map(document.getElementById("map"), { zoom: 13, center: pos });
+  marcador = new google.maps.Marker({ position: pos, map: mapa, draggable: true });
+  google.maps.event.addListener(marcador, 'dragend', function() {
+    document.getElementById('input-gps').value = marcador.getPosition().lat().toFixed(6) + ", " + marcador.getPosition().lng().toFixed(6);
+  });
+}
+
+function navegar(paso) {
+  if (paso === 1 && !validarSeccion()) return;
+  document.getElementById(`sec-${seccionActual}`).classList.remove('activa');
+  seccionActual += paso;
+  document.getElementById(`sec-${seccionActual}`).classList.add('activa');
+  actualizarSidebar();
+  if(CONFIG_FORMULARIO[seccionActual].preguntas.some(p => p.tipo === 'mapa')) setTimeout(initMapa, 300);
+  window.scrollTo(0,0);
+  actualizarBarra();
+}
+
+function validarSeccion() {
+  const sec = document.getElementById(`sec-${seccionActual}`);
+  let ok = true;
+  sec.querySelectorAll('[data-req="true"]').forEach(r => {
+    if(!r.value && r.offsetParent !== null) { r.classList.add('is-invalid'); ok = false; }
+    else r.classList.remove('is-invalid');
+  });
+  if(!ok) alert("Por favor complete los campos obligatorios (*)");
+  return ok;
+}
+
+function actualizarSidebar() {
+  CONFIG_FORMULARIO.forEach((_, i) => {
+    const el = document.getElementById(`side-item-${i}`);
+    if(el) {
+      el.classList.remove('active', 'completed');
+      if(i < seccionActual) el.classList.add('completed');
+      if(i === seccionActual) el.classList.add('active');
+    }
+  });
+}
+
+function chequearLogica() {
+  const form = document.getElementById('mainForm');
+  const formData = new FormData(form);
+  CONFIG_FORMULARIO.forEach(sec => {
+    sec.preguntas.forEach(p => {
+      if(p.dependeDe) {
+        const val = formData.get(p.dependeDe);
+        const div = document.getElementById(`div-${p.id}`);
+        const match = Array.isArray(p.valorPadre) ? p.valorPadre.includes(val) : val === p.valorPadre;
+        div.style.display = match ? 'block' : 'none';
+      }
+    });
+  });
+}
+
+function actualizarBarra() {
+  const pct = ((seccionActual + 1) / CONFIG_FORMULARIO.length) * 100;
+  document.getElementById('bar').style.width = pct + '%';
+}
+
+function finalizar() {
+  if(!validarSeccion()) return;
+  const data = { "Email de Usuario": usuarioEmail };
+  CONFIG_FORMULARIO.forEach(sec => {
+    sec.preguntas.forEach(p => {
+      const el = document.getElementsByName(p.id);
+      if(el.length > 0) {
+        let val = (p.tipo === 'radio') ? (Array.from(el).find(r => r.checked)?.value || "") : el[0].value;
+        data[p.label] = val;
+      }
+    });
+  });
+  document.getElementById('btnEnviar').disabled = true;
+  google.script.run.withSuccessHandler(() => { alert("¡Guardado!"); location.reload(); }).guardarDatos(data);
+}
+</script>
+</body>
+</html>
